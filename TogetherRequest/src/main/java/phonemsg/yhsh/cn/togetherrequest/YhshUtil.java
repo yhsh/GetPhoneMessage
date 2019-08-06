@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public class YhshUtil {
 
-    private static final String REAPAL_UTIL_TAG = "YhshUtil ";
+    private static final String YHSH_UTIL_TAG = "YhshUtil ";
 
     /**
      * 获得一个UUID
@@ -100,7 +100,7 @@ public class YhshUtil {
                 }
             }
         } catch (Exception e) {
-            Log.e(REAPAL_UTIL_TAG, "getLocalIPAddress() 获取本机ip出现异常，异常信息为：" + e.getMessage());
+            Log.e(YHSH_UTIL_TAG, "getLocalIPAddress() 获取本机ip出现异常，异常信息为：" + e.getMessage());
         }
         return null;
     }

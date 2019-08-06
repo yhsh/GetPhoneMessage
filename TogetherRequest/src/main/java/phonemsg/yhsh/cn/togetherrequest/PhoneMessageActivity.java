@@ -249,10 +249,11 @@ public class PhoneMessageActivity extends Activity {
         }
         //2.2获取最佳的定位方式
         Criteria criteria = new Criteria();
-        criteria.setAltitudeRequired(true);//设置是否可以定位海拔,如果设置定位海拔，返回一定是gps
+        //设置是否可以定位海拔,如果设置定位海拔，返回一定是gps
+        criteria.setAltitudeRequired(true);
         //criteria : 设置定位属性
         //enabledOnly : true如果定位可用就返回
-        String bestProvider = locationManager.getBestProvider(criteria, false);
+        String bestProvider = locationManager.getBestProvider(criteria, true);
         System.out.println("最佳的定位方式:" + bestProvider);
         //3.定位
         MyLocationListener myLocationListener = new MyLocationListener();
@@ -266,20 +267,37 @@ public class PhoneMessageActivity extends Activity {
                 return;
             }
         }
-        locationManager.requestLocationUpdates("network", 0, 0, myLocationListener);
+        //原因是API本身是GPS优先的，这样在室内测试时会出现bestprovider得到的是GPS方式，但是却无法定位的情况（室内GPS信号很弱，基本不可用）。所以我改成了优先选择网络定位，然后再选择GPS定位。
+        if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+            bestProvider = LocationManager.NETWORK_PROVIDER;
+        } else if (providers.contains(LocationManager.PASSIVE_PROVIDER)) {
+            bestProvider = LocationManager.GPS_PROVIDER;
+        } else {
+            // 当没有可用的位置提供器时，弹出Toast提示用户
+            Toast.makeText(this, "Please Open Your GPS or Location Service", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        locationManager.requestLocationUpdates(bestProvider, 0, 0, myLocationListener);
     }
 
     class MyLocationListener implements LocationListener {
         private String latLongString;
 
-        //当定位位置改变的调用的方法
-        //Location : 当前的位置
+        /**
+         * 当定位位置改变的调用的方法
+         *
+         * @param location 当前的位置
+         */
         @Override
         public void onLocationChanged(Location location) {
-            float accuracy = location.getAccuracy();//获取精确位置
-            double altitude = location.getAltitude();//获取海拔
-            final double latitude = location.getLatitude();//获取纬度，平行
-            final double longitude = location.getLongitude();//获取经度，垂直
+            //获取精确位置
+            float accuracy = location.getAccuracy();
+            //获取海拔
+            double altitude = location.getAltitude();
+            //获取纬度，平行
+            final double latitude = location.getLatitude();
+            //获取经度，垂直
+            final double longitude = location.getLongitude();
             Log.e("打印经纬度：", "longitude:" + longitude + "  latitude:" + latitude + "精确位置" + accuracy + "海拔" + altitude);
             setDataToID(R.id.tv_seven, "GPS", longitude + "," + latitude);
             new Thread(new Runnable() {
@@ -288,7 +306,8 @@ public class PhoneMessageActivity extends Activity {
                     List<Address> addsList = null;
                     Geocoder geocoder = new Geocoder(PhoneMessageActivity.this);
                     try {
-                        addsList = geocoder.getFromLocation(latitude, longitude, 10);//得到的位置可能有多个当前只取其中一个
+                        //得到的位置可能有多个当前只取其中一个
+                        addsList = geocoder.getFromLocation(latitude, longitude, 10);
                         Log.e("打印拿到的城市", addsList.toString());
                     } catch (IOException e) {
 
@@ -297,7 +316,8 @@ public class PhoneMessageActivity extends Activity {
                     if (addsList != null && addsList.size() > 0) {
                         for (int i = 0; i < addsList.size(); i++) {
                             final Address ads = addsList.get(i);
-                            latLongString = ads.getLocality();//拿到城市
+                            //拿到城市
+                            latLongString = ads.getLocality();
 //                            latLongString = ads.getAddressLine(0);//拿到地址
                             runOnUiThread(new Runnable() {
                                 @Override

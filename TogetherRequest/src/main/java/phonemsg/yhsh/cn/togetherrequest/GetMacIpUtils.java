@@ -81,7 +81,8 @@ public class GetMacIpUtils {
             while (null != str) {
                 str = input.readLine();
                 if (str != null) {
-                    macSerial = str.trim();//去空格
+                    //去空格
+                    macSerial = str.trim();
                     break;
                 }
             }
