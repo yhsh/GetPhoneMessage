@@ -66,9 +66,9 @@ allprojects {
 			maven { url 'https://jitpack.io' }
 		}
 	}
-	```
+	
 - 添加依赖
-  ``` dependencies {
+ dependencies {
 	        implementation 'com.github.yhsh:GetPhoneMessage:1.0.0'
 	}
 	```
