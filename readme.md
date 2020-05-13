@@ -1,5 +1,5 @@
-#介绍:
-##工具如下
+# 介绍:
+## 工具如下
 读取手机硬件和系统信息的分类
 主要有：
 - 联网方式
@@ -55,10 +55,10 @@
 
 
 
-#新增加：
+# 新增加：
 - 高斯模糊，毛玻璃效果
 
-#使用方法
+# 使用方法
 ```
 allprojects {
 		repositories {
@@ -71,5 +71,4 @@ allprojects {
  dependencies {
 	        implementation 'com.github.yhsh:GetPhoneMessage:1.0.0'
 	}
-	```
   
